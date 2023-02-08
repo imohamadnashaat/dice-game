@@ -46,3 +46,19 @@ btnRoll.addEventListener('click', function () {
       currentScore;
   }
 });
+
+// Holding current score
+btnHold.addEventListener('click', function () {
+  // Set current score to active player
+  scores[activePlayer] += currentScore;
+  document.querySelector(`#score--${activePlayer}`).textContent =
+    scores[activePlayer];
+  // Set current score to zero
+  currentScore = 0;
+  document.querySelector(`#current--${activePlayer}`).textContent =
+    currentScore;
+  // Switch to next player
+  activePlayer = activePlayer === 0 ? 1 : 0;
+  player0El.classList.toggle('player--active');
+  player1El.classList.toggle('player--active');
+});
