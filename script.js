@@ -19,46 +19,60 @@ diceEl.classList.add('hidden');
 const scores = [0, 0];
 let currentScore = 0;
 let activePlayer = 0;
+let playing = true;
+
+const switchPlayer = function () {
+  currentScore = 0;
+  document.querySelector(`#current--${activePlayer}`).textContent =
+    currentScore;
+  activePlayer = activePlayer === 0 ? 1 : 0;
+  player0El.classList.toggle('player--active');
+  player1El.classList.toggle('player--active');
+};
 
 // Rolling dice functionality
 btnRoll.addEventListener('click', function () {
-  // Generating a random dice roll
-  const dice = Math.trunc(Math.random() * 6) + 1;
-  // Display dice
-  diceEl.src = `img/dice-${dice}.png`;
-  diceEl.classList.remove('hidden');
+  if (playing) {
+    // Generating a random dice roll
+    const dice = Math.trunc(Math.random() * 6) + 1;
+    // Display dice
+    diceEl.src = `img/dice-${dice}.png`;
+    diceEl.classList.remove('hidden');
 
-  // Check for rolled 1: if ture
-  if (dice === 1) {
-    // Set current score to zero
-    currentScore = 0;
-    document.getElementById(`current--${activePlayer}`).textContent =
-      currentScore;
-    // Switch to next player
-    activePlayer = activePlayer === 0 ? 1 : 0;
-    player0El.classList.toggle('player--active');
-    player1El.classList.toggle('player--active');
-
-    // Add dice to current score
-  } else {
-    currentScore += dice;
-    document.getElementById(`current--${activePlayer}`).textContent =
-      currentScore;
+    // Check for rolled 1: if ture
+    if (dice === 1) {
+      // Switch to next player
+      switchPlayer();
+      // Add dice to current score
+    } else {
+      currentScore += dice;
+      document.getElementById(`current--${activePlayer}`).textContent =
+        currentScore;
+    }
   }
 });
 
 // Holding current score
 btnHold.addEventListener('click', function () {
-  // Set current score to active player
-  scores[activePlayer] += currentScore;
-  document.querySelector(`#score--${activePlayer}`).textContent =
-    scores[activePlayer];
-  // Set current score to zero
-  currentScore = 0;
-  document.querySelector(`#current--${activePlayer}`).textContent =
-    currentScore;
-  // Switch to next player
-  activePlayer = activePlayer === 0 ? 1 : 0;
-  player0El.classList.toggle('player--active');
-  player1El.classList.toggle('player--active');
+  if (playing) {
+    // Set current score to active player
+    scores[activePlayer] += currentScore;
+    document.querySelector(`#score--${activePlayer}`).textContent =
+      scores[activePlayer];
+    // Check if player's socre is >= 100
+    if (scores[activePlayer] >= 100) {
+      // finish the game
+      playing = false;
+      diceEl.classList.add('hidden');
+      document
+        .querySelector(`.player--${activePlayer}`)
+        .classList.add('player--winner');
+      document
+        .querySelector(`.player--${activePlayer}`)
+        .classList.remove('player--active');
+    } else {
+      // Switch to next player
+      switchPlayer();
+    }
+  }
 });
